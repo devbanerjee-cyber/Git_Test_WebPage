@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Training Data</title>
+</head>
+<body>
+  <h1>Training Data</h1>
+  <div id="data"></div>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // 🔹 Replace these (will get in Phase 2)
+    const supabaseUrl = "YOUR_SUPABASE_URL";
+    const supabaseKey = "YOUR_ANON_KEY";
+
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function fetchData() {
+      const { data, error } = await supabase
+        .from("training_data")
+        .select("*");
+
+      if (error) {
+        console.error("Error:", error);
+        return;
+      }
+
+      const div = document.getElementById("data");
+      div.innerHTML = "";
+
+      data.forEach(row => {
+        div.innerHTML += `
+          <div>
+            <h3>${row.title}</h3>
+            <p>${row.desc}</p>
+            <b>Tech:</b> ${row.tech}<br/>
+            <a href="${row.link}" target="_blank">View</a>
+            <hr>
+          </div>
+        `;
+      });
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>
