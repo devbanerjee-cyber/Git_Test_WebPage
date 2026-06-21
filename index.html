@@ -1,50 +1,106 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Training Data</title>
-</head>
-<body>
-  <h1>Training Data</h1>
-  <div id="data"></div>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Training Portal</title>
 
-  <!-- Supabase CDN -->
+  <!-- ✅ Latest Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ✅ Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // 🔹 Replace these (will get in Phase 2)
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#4F46E5",
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- 🔷 Header -->
+  <header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-gray-800">Training Portal</h1>
+      <span class="text-sm text-gray-500">Powered by Supabase</span>
+    </div>
+  </header>
+
+  <!-- 🔷 Main -->
+  <main class="max-w-7xl mx-auto px-6 py-8">
+
+    <!-- 🔷 Title -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold text-gray-700">Available Trainings</h2>
+      <p class="text-sm text-gray-500">Explore your learning resources</p>
+    </div>
+
+    <!-- 🔷 Grid Layout -->
+    <div id="cards" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Cards will be injected here -->
+    </div>
+
+  </main>
+
+
+  <!-- 🔷 Script -->
+  <script>
+    // ✅ Replace with your values
     const supabaseUrl = "YOUR_SUPABASE_URL";
     const supabaseKey = "YOUR_ANON_KEY";
 
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function fetchData() {
-      const { data, error } = await supabase
+    async function loadData() {
+      const { data, error } = await client
         .from("training_data")
         .select("*");
 
       if (error) {
-        console.error("Error:", error);
+        console.error(error);
         return;
       }
 
-      const div = document.getElementById("data");
-      div.innerHTML = "";
+      const container = document.getElementById("cards");
+      container.innerHTML = "";
 
-      data.forEach(row => {
-        div.innerHTML += `
-          <div>
-            <h3>${row.title}</h3>
-            <p>${row.desc}</p>
-            <b>Tech:</b> ${row.tech}<br/>
-            <a href="${row.link}" target="_blank">View</a>
-            <hr>
+      data.forEach(item => {
+        const card = `
+          <div class="bg-white rounded-2xl shadow hover:shadow-lg transition p-6">
+
+            <div class="mb-4">
+              <h3 class="text-lg font-semibold text-gray-800">${item.title}</h3>
+              <p class="text-sm text-gray-500 mt-1">${item.desc}</p>
+            </div>
+
+            <div class="mb-4">
+              <span class="inline-block bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full">
+                ${item.tech}
+              </span>
+            </div>
+
+            <a href="${item.link}" target="_blank"
+              class="block text-center bg-primary text-white py-2 rounded-lg hover:bg-indigo-700 transition">
+              View Training
+            </a>
+
           </div>
         `;
+        container.innerHTML += card;
       });
     }
 
-    fetchData();
+    loadData();
   </script>
+
 </body>
 </html>
