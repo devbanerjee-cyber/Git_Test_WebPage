@@ -3,10 +3,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Training Portal</title>
 
-  <!-- ✅ Latest Tailwind CDN -->
+  <!-- ✅ Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- ✅ Supabase CDN -->
@@ -27,38 +27,36 @@
 
 <body class="bg-gray-100 min-h-screen">
 
-  <!-- 🔷 Header -->
+  <!-- 🔹 Header -->
   <header class="bg-white shadow-sm">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-gray-800">Training Portal</h1>
-      <span class="text-sm text-gray-500">Powered by Supabase</span>
+      <span class="text-sm text-gray-500">Supabase Connected</span>
     </div>
   </header>
 
-  <!-- 🔷 Main -->
+  <!-- 🔹 Main -->
   <main class="max-w-7xl mx-auto px-6 py-8">
 
-    <!-- 🔷 Title -->
     <div class="mb-6">
       <h2 class="text-xl font-semibold text-gray-700">Available Trainings</h2>
-      <p class="text-sm text-gray-500">Explore your learning resources</p>
+      <p class="text-sm text-gray-500">Explore learning resources</p>
     </div>
 
-    <!-- 🔷 Grid Layout -->
     <div id="cards" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Cards will be injected here -->
+      <!-- Dynamic content -->
     </div>
 
   </main>
 
-
-  <!-- 🔷 Script -->
+  <!-- 🔹 Script -->
   <script>
-    // ✅ Replace with your values
-    const supabaseUrl = "YOUR_SUPABASE_URL";
-    const supabaseKey = "YOUR_ANON_KEY";
+    // ✅ Your Supabase credentials
+    const SUPABASE_URL = "https://jtymtovpzqrfkdhbcrxg.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_8ekcWHQ_-jc4wHc7jO9POQ_kPI5TEF9";
 
-    const client = supabase.createClient(supabaseUrl, supabaseKey);
+    const { createClient } = supabase;
+    const client = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function loadData() {
       const { data, error } = await client
@@ -66,7 +64,7 @@
         .select("*");
 
       if (error) {
-        console.error(error);
+        console.error("Error fetching data:", error);
         return;
       }
 
@@ -75,12 +73,15 @@
 
       data.forEach(item => {
         const card = `
-          <div class="bg-white rounded-2xl shadow hover:shadow-lg transition p-6">
+          <div class="bg-white rounded-2xl shadow hover:shadow-xl transition p-6">
 
-            <div class="mb-4">
-              <h3 class="text-lg font-semibold text-gray-800">${item.title}</h3>
-              <p class="text-sm text-gray-500 mt-1">${item.desc}</p>
-            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">
+              ${item.title}
+            </h3>
+
+            <p class="text-sm text-gray-500 mb-4">
+              ${item.desc}
+            </p>
 
             <div class="mb-4">
               <span class="inline-block bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full">
@@ -95,6 +96,7 @@
 
           </div>
         `;
+
         container.innerHTML += card;
       });
     }
