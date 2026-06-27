@@ -1,13 +1,17 @@
-
 async function loadComponent(id, file) {
-  const element = document.getElementById(id);
-  if (!element) return;
+  const el = document.getElementById(id);
+  if (!el) return;
 
-  const response = await fetch(file);
-  const html = await response.text();
-  element.innerHTML = html;
+  try {
+    const res = await fetch(file);
+    if (!res.ok) throw new Error("File not found: " + file);
+
+    const html = await res.text();
+    el.innerHTML = html;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-// ✅ Load header + footer
 loadComponent("header", "components/header.html");
 loadComponent("footer", "components/footer.html");
