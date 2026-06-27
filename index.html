@@ -2,160 +2,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Enterprise Training Hub</title>
+  <meta charset="UTF-8">
+  <title>Training Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- ✅ Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
 
-  <!-- ✅ Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: "#4F46E5",
-            secondary: "#6366F1",
-          },
-        },
-      },
-    };
-  </script>
 </head>
 
-<body class="bg-gray-100 min-h-screen">
+<body>
 
-  <!-- 🔹 Header -->
-  <header class="bg-white shadow-sm sticky top-0 z-10">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-gray-800">Enterprise Training Hub</h1>
-      <span class="text-sm text-green-600 font-medium">● Live Data</span>
-    </div>
+  <header>
+    <h1>Training Portal</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
   </header>
 
-  <!-- 🔹 Hero Section -->
-  <section class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-10">
-    <div class="max-w-7xl mx-auto px-6">
-      <h2 class="text-3xl font-bold mb-2">Upskill with Curated Trainings</h2>
-      <p class="text-sm opacity-90">Explore technical learning across Azure, FinOps, AI and more</p>
-    </div>
-  </section>
-
-  <!-- 🔹 Main -->
-  <main class="max-w-7xl mx-auto px-6 py-8">
-
-    <!-- 🔹 Search + Filter -->
-    <div class="flex flex-col sm:flex-row gap-4 mb-6">
-      <input 
-        id="searchInput"
-        type="text"
-        placeholder="Search trainings..."
-        class="w-full sm:w-1/2 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-      />
-
-      <input 
-        id="filterInput"
-        type="text"
-        placeholder="Filter by tech (e.g. Azure, AI)"
-        class="w-full sm:w-1/3 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-      />
-    </div>
-
-    <!-- 🔹 Cards -->
-    <div id="cards" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Dynamic -->
-    </div>
-
+  <main>
+    <h2>Available Trainings</h2>
+    <div id="cards"></div>
   </main>
 
-  <!-- 🔹 Script -->
-  <script>
-    const SUPABASE_URL = "https://jtymtovpzqrfkdhbcrxg.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_8ekcWHQ_-jc4wHc7jO9POQ_kPI5TEF9";
+  <footer>
+    <p>© 2026 Training Portal</p>
+  </footer>
 
-    const { createClient } = supabase;
-    const client = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const container = document.getElementById("cards");
-    const searchInput = document.getElementById("searchInput");
-    const filterInput = document.getElementById("filterInput");
-
-    let globalData = [];
-
-    async function loadData() {
-      container.innerHTML = "<p class='text-gray-500'>Loading trainings...</p>";
-
-      const { data, error } = await client
-        .from("trainingdata")   // ✅ Correct table name
-        .select("*")
-        .order("id", { ascending: false });
-
-      if (error) {
-        console.error(error);
-        container.innerHTML = "<p class='text-red-500'>Error loading data</p>";
-        return;
-      }
-
-      globalData = data;
-      renderData(data);
-    }
-
-    function renderData(data) {
-      if (!data.length) {
-        container.innerHTML = "<p class='text-gray-500'>No trainings found</p>";
-        return;
-      }
-
-      container.innerHTML = data.map(item => `
-        <div class="bg-white rounded-2xl shadow hover:shadow-lg transition p-6 flex flex-col justify-between">
-
-          <div>
-            <h3 class="text-lg font-semibold text-gray-800 mb-2">
-              ${item.title || "Untitled"}
-            </h3>
-
-            <p class="text-sm text-gray-500 mb-4">
-              ${item.desc || "No description available"}
-            </p>
-
-            <span class="inline-block bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full mb-4">
-              ${item.tech || "General"}
-            </span>
-          </div>
-
-          <a href="${item.link || '#'}" target="_blank"
-            class="block text-center bg-primary text-white py-2 rounded-lg hover:bg-indigo-700 transition mt-auto">
-            View Training →
-          </a>
-
-        </div>
-      `).join("");
-    }
-
-    // 🔍 Search + Filter Logic
-    function applyFilters() {
-      const searchText = searchInput.value.toLowerCase();
-      const filterText = filterInput.value.toLowerCase();
-
-      const filtered = globalData.filter(item => {
-        return (
-          (item.title || "").toLowerCase().includes(searchText) &&
-          (item.tech || "").toLowerCase().includes(filterText)
-        );
-      });
-
-      renderData(filtered);
-    }
-
-    searchInput.addEventListener("input", applyFilters);
-    filterInput.addEventListener("input", applyFilters);
-
-    loadData();
-  </script>
-
+  <script src="js/app.js"></script>
 </body>
 </html>
-``
