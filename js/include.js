@@ -1,17 +1,31 @@
-async function loadComponent(id, file) {
-  const el = document.getElementById(id);
-  if (!el) return;
+// Shared Header and Footer Loader
+
+async function loadComponent(elementId, filePath) {
+  const element = document.getElementById(elementId);
+
+  if (!element) return;
 
   try {
-    const res = await fetch(file);
-    if (!res.ok) throw new Error("File not found: " + file);
+    const response = await fetch(filePath);
 
-    const html = await res.text();
-    el.innerHTML = html;
-  } catch (err) {
-    console.error(err);
+    if (!response.ok) {
+      throw new Error("Failed to load: " + filePath);
+    }
+
+    const html = await response.text();
+    element.innerHTML = html;
+
+  } catch (error) {
+    console.error("Component load error:", error);
   }
 }
 
-loadComponent("header", "components/header.html");
-loadComponent("footer", "components/footer.html");
+async function loadLayout() {
+  await loadComponent("header", "components/header.html");
+  await loadComponent("footer", "components/footer.html");
+
+  // Tell auth.js that header has loaded
+  document.dispatchEvent(new Event("layoutLoaded"));
+}
+
+loadLayout();
