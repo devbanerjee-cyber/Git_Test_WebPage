@@ -5,37 +5,31 @@
   <title>Training Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- ✅ Correct CSS link -->
+  <!-- ✅ CSS -->
   <link rel="stylesheet" href="css/styles.css">
 
-  <!-- ✅ Supabase CDN -->
+  <!-- ✅ Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
-  <!-- ✅ Header -->
-  <header>
-    <h1>Training Portal</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-  </header>
+  <!-- ✅ Shared Header -->
+  <div id="header"></div>
 
   <!-- ✅ Main -->
   <main>
     <h2>Available Trainings</h2>
-    <div id="cards"></div>
+    <div id="cards">
+      <p>Loading trainings...</p>
+    </div>
   </main>
 
-  <!-- ✅ Footer -->
-  <footer>
-    <p>© 2026 Training Portal</p>
-  </footer>
+  <!-- ✅ Shared Footer -->
+  <div id="footer"></div>
 
-  <!-- ✅ Correct JS link -->
+  <!-- ✅ Scripts -->
+  <script src="js/include.js"></script>
   <script src="js/app.js"></script>
 
 </body>
