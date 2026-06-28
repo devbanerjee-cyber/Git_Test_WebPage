@@ -1,5 +1,3 @@
-// Firebase configuration for Training Portal
-
 const firebaseConfig = {
   apiKey: "AIzaSyDourbydggTKB2T9DtWuda0HaOM0F7exm0",
   authDomain: "devfirebasegit.firebaseapp.com",
@@ -10,4 +8,6 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase only once
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
