@@ -1,1 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- ✅ CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- ✅ Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- ✅ Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+
+  <!-- ✅ Shared Header -->
+  <div id="header-placeholder"></div>
+
+  <main>
+    <h2>Admin Panel</h2>
+
+    <!-- ✅ Add Button -->
+    <button id="addBtn">Add New</button>
+
+    <!-- ✅ Add Form -->
+    <div id="addForm" style="display:none;">
+      <input id="newTitle" placeholder="Title" required><br>
+      <input id="newDesc" placeholder="Description"><br>
+      <input id="newTech" placeholder="Tech"><br>
+      <input id="newLink" placeholder="Link"><br>
+      <button id="saveNew">Save</button>
+    </div>
+
+    <hr>
+
+    <!-- ✅ List -->
+    <div id="list"></div>
+  </main>
+
+  <!-- ✅ Shared Footer -->
+  <div id="footer-placeholder"></div>
+
+  <!-- ✅ Your Existing Files -->
+  <script src="js/config.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/include.js"></script>
+
+  <!-- ✅ Admin Logic -->
+  <script>
+    const ADMIN_EMAIL = "YOUR EMAIL HERE";
+
+    const auth = firebase.auth();
+    const supabase = window.supabaseClient;
+
+    // ✅ Check login + access
+    auth.onAuthStateChanged(user => {
+      if (!user || user.email !== ADMIN_EMAIL) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      loadData();
+    });
+
+    const list = document.getElementById("list");
+
+    // ✅ Load rows
+    async function loadData() {
+      const { data } = await supabase
+        .from("trainingdata")
+        .select("*")
+        .order("id");
+
+      list.innerHTML = "";
+
+      data.forEach(row => renderRow(row));
+    }
+
+    // ✅ Render row
+    function renderRow(row) {
+      const div = document.createElement("div");
+
+      div.innerHTML = `
+        <input value="${row.title}" disabled class="title">
+        <input value="${row.desc || ''}" disabled class="desc">
+        <input value="${row.tech || ''}" disabled class="tech">
+        <input value="${row.link || ''}" disabled class="link">
+
+        <button class="edit">Edit</button>
+        <button class="save" style="display:none;">Save</button>
+        <button class="delete">Delete</button>
+      `;
+
+      // Edit
+      div.querySelector(".edit").onclick = () => {
+        div.querySelectorAll("input").forEach(i => i.disabled = false);
+        div.querySelector(".save").style.display = "inline";
+      };
+
+      // Save
+      div.querySelector(".save").onclick = async () => {
+
+        const updated = {
+          title: div.querySelector(".title").value,
+          desc: div.querySelector(".desc").value,
+          tech: div.querySelector(".tech").value,
+          link: div.querySelector(".link").value
+        };
+
+        await supabase
+          .from("trainingdata")
+          .update(updated)
+          .eq("id", row.id);
+
+        div.querySelectorAll("input").forEach(i => i.disabled = true);
+        div.querySelector(".save").style.display = "none";
+      };
+
+      // Delete
+      div.querySelector(".delete").onclick = async () => {
+        await supabase
+          .from("trainingdata")
+          .delete()
+          .eq("id", row.id);
+
+        div.remove();
+      };
+
+      list.appendChild(div);
+    }
+
+    // ✅ Add new toggle
+    document.getElementById("addBtn").onclick = () => {
+      document.getElementById("addForm").style.display = "block";
+    };
+
+    // ✅ Save new row
+    document.getElementById("saveNew").onclick = async () => {
+
+      const title = document.getElementById("newTitle").value;
+
+      if (!title) {
+        alert("Title required");
+        return;
+      }
+
+      const newRow = {
+        title,
+        desc: document.getElementById("newDesc").value,
+        tech: document.getElementById("newTech").value,
+        link: document.getElementById("newLink").value
+      };
+
+      const { data } = await supabase
+        .from("trainingdata")
+        .insert([newRow])
+        .select();
+
+      renderRow(data[0]);
+
+      document.getElementById("addForm").style.display = "none";
+    };
+  </script>
+
+</body>
+</html>
